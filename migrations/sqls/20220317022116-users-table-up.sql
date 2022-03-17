@@ -1,1 +1,0 @@
-CREATE TABLE Users(fullname VARCHAR(50),email VARCHAR(255));
