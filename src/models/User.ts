@@ -1,78 +1,161 @@
-import database from "../database";
+import database from "../database"
+import bcrypt from 'bcrypt'
 
 export type User = {
-    fullname: string;
-    email: string
- 
+    id? :string,
+    firstname :string,
+    lastname :string,
+    username :string,
+    password_digest :string
 }
 
 export class UserStore {
- async index(): Promise<User[]> {
-   try {
-     
-     const conn = await database.connect()
-     const sql = 'SELECT * FROM Users'
+  async index(): Promise<User[]> {
+    try {
+      // @ts-ignore
+      const conn = await database.connect()
+      const sql = 'SELECT * FROM users'
 
-     const result = await conn.query(sql)
+      const result = await conn.query(sql)
 
-     conn.release()
+      conn.release()
 
-     return result.rows 
-   } catch (err) {
-     throw new Error(`Could not get Users. Error: ${err}`)
-   }
- }
+      return result.rows 
+    } catch (err) {
+      throw new Error(`Could not get users. Error: ${err}`)
+    }
+  }
 
- async show(id: string): Promise<User> {
-   try {
-   const sql = 'SELECT * FROM Users WHERE id=($1)'
-   // @ts-ignore
-   const conn = await database.connect()
+  async show(id: string): Promise<User> {
+    try {
+    const sql = 'SELECT * FROM users WHERE id=($1)'
+    // @ts-ignore
+    const conn = await database.connect()
 
-   const result = await conn.query(sql, [id])
+    const result = await conn.query(sql, [id])
 
-   conn.release()
+    conn.release()
 
-   return result.rows[0]
-   } catch (err) {
-       throw new Error(`Could not find User ${id}. Error: ${err}`)
-   }
- }
+    return result.rows[0]
+    } catch (err) {
+        throw new Error(`Could not find users ${id}. Error: ${err}`)
+    }
+  }
+  async getByUsername(username: string): Promise<User> {
+    try {
+    const sql = 'SELECT * FROM users WHERE username=($1)'
+    // @ts-ignore
+    const conn = await database.connect()
 
- async create(user: User): Promise<User> {
-     try {
-   const sql = 'INSERT INTO Users (fullname , email) VALUES($1, $2) RETURNING *'
-  
-   const conn = await database.connect()
+    const result = await conn.query(sql, [username])
 
-   const result = await conn
-       .query(sql, [user.fullname, user.email])
+    conn.release()
 
-   const User = result.rows[0]
+    return result.rows[0]
+    } catch (err) {
+        throw new Error(`Could not find users ${username}. Error: ${err}`)
+    }
+  }
 
-   conn.release()
-
-   return User
-     } catch (err) {
-         throw new Error(`Could not add new User ${user.fullname}. Error: ${err}`)
-     }
- }
-
- async delete(id: string): Promise<User> {
-     try {
-   const sql = 'DELETE FROM Users WHERE id=($1)'
+  async create(user: User): Promise<User> {
    
-   const conn = await database.connect()
+      try {
+        const {
+          BCRYPT_PASSWORD,
+          SALT_ROUNDS
+      } = process.env 
 
-   const result = await conn.query(sql, [id])
+      const hash = bcrypt.hashSync(
+        user.password_digest + BCRYPT_PASSWORD, 
+        parseInt(SALT_ROUNDS as string)
+      );
 
-   const User = result.rows[0]
+    const sql = 'INSERT INTO users (firstname,lastname,username,password_digest) VALUES($1,$2,$3,$4) RETURNING *'
+    // @ts-ignore
+    const conn = await database.connect()
 
-   conn.release()
+    const result = await conn
+        .query(sql, [user.firstname,user.lastname,user.username,hash])
 
-   return User
-     } catch (err) {
-         throw new Error(`Could not delete User ${id}. Error: ${err}`)
-     }
- }
+    const users = result.rows[0]
+
+    conn.release()
+
+    return users
+      } catch (err) {
+          throw new Error(`Could not add new product ${user.firstname}. Error: ${err}`)
+      }
+  }
+
+  async update(user: User): Promise<User> {
+    
+    try {
+
+      const {
+        BCRYPT_PASSWORD,
+        SALT_ROUNDS
+    } = process.env 
+
+    const hash = bcrypt.hashSync(
+      user.password_digest + BCRYPT_PASSWORD, 
+      parseInt(SALT_ROUNDS as string)
+    );
+
+  const sql = `UPDATE users
+                SET firstname=$1,lastname=$2,username=$3,password_digest=$4
+                WHERE id = ${user.id}
+                RETURNING *`
+  // @ts-ignore
+  const conn = await database.connect()
+
+  const result = await conn
+      .query(sql, [user.firstname,user.lastname,user.username,hash])
+
+  const users = result.rows[0]
+
+  conn.release()
+
+  return users
+    } catch (err) {
+        throw new Error(`Could not update ${user.firstname}. Error: ${err}`)
+    }
+}
+
+  async delete(id: string): Promise<User> {
+      try {
+    const sql = 'DELETE FROM users WHERE id=($1)'
+    // @ts-ignore
+    const conn = await database.connect()
+
+    const result = await conn.query(sql, [id])
+
+    const users = result.rows[0]
+
+    conn.release()
+
+    return users
+      } catch (err) {
+          throw new Error(`Could not delete users ${id}. Error: ${err}`)
+      }
+  }
+
+  async authenticate(username: string, password: string): Promise<User | null> {
+    const conn = await database.connect()
+    const sql = 'SELECT * FROM users WHERE username=($1)'
+    const result = await conn.query(sql, [username])
+
+    const {
+      BCRYPT_PASSWORD,
+  } = process.env 
+
+    if(result.rows.length) {
+      const user = result.rows[0]
+      if (bcrypt.compareSync(password+BCRYPT_PASSWORD, user.password_digest)) {
+        return user
+      }
+    }
+
+    return null
+  }
+
 }

@@ -5,27 +5,292 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 ## API Endpoints
 #### Products
-- Index 
-- Show
-- Create [token required]
-- [OPTIONAL] Top 5 most popular products 
-- [OPTIONAL] Products by category (args: product category)
+
+- popular - NoToken 
+    endpoint : '/products/popular'
+    methohd:`GET`
+    body 
+    ```json
+    N\A
+     ```
+    
+
+- Index - NoToken
+    endpoint : '/products'
+    methohd:`GET`
+    body 
+    ```json
+    N\A
+     ```
+    
+
+- Show - NoToken
+    endpoint : '/products/:id'
+    methohd:`GET`
+    body 
+    ```json
+    N\A
+     ```
+  
+- Get By Category - NoToken
+    endpoint : '/products/:category_id/category'
+    methohd:`GET`
+    body 
+    ```json
+    N\A
+     ```
+
+- Create New - [Token]
+    endpoint : '/products'
+    methohd:`POST`
+    body 
+    ```json
+    {
+    "name":"Galaxy Z-5000",
+    "price":"60000",
+    "category_id":"3"
+    }
+    
+    ```
+  
+- Update - [Token]
+    endpoint : '/products/:id'
+    methohd:`PUT`
+    body 
+    ```json
+    {
+    "name":"Galaxy Z-5000",
+    "price":"60000",
+    "category_id":"3"
+    }
+   
+    ``` 
+
+- DELETE - [Token]
+    endpoint : '/products/:id'
+    methohd:`DELETE`
+    body 
+    ```json
+    {
+    "id":"12",
+    }
+
+    ``` 
+
+#### Categorys
+
+- Index - NoToken
+    endpoint : '/categories'
+    methohd:`GET`
+    body 
+    ```json
+    N\A
+     ```
+    
+
+- Show - NoToken
+    endpoint : '/categories/:id'
+    methohd:`GET`
+    body 
+    ```json
+    N\A
+     ```
+  
+
+- Create New - [Token]
+    endpoint : '/categories'
+    methohd:`POST`
+    body 
+    ```json
+    {
+    "name":"Smart Watch",
+    }
+    
+    ```
+  
+- Update - [Token]
+    endpoint : '/categories/:id'
+    methohd:`PUT`
+    body 
+    ```json
+    {
+    "name":"TV",
+   
+    }
+   
+    ``` 
+
+- DELETE - [Token]
+    endpoint : '/categories/:id'
+    methohd:`DELETE`
+    body 
+    ```json
+    {
+    "id":"12",
+    }
+
+    ``` 
 
 #### Users
-- Index [token required]
-- Show [token required]
-- Create N[token required]
+
+- Index - [Token]
+    endpoint : '/users'
+    methohd:`GET`
+    body 
+    ```json
+    N\A
+     ```
+    
+
+- Show - [Token]
+    endpoint : '/users/:id'
+    methohd:`GET`
+    body 
+    ```json
+    N\A
+     ```
+  
+
+- Create New - NoToken
+    endpoint : '/users'
+    methohd:`POST`
+    body 
+    ```json
+    {
+    "firstname":"Abanob",
+    "lastname":"Magdy",
+    "username":"Abanob",
+    "password_digest" :"password_digest"
+    }
+    
+    ```
+  
+- Update - [Token]
+    endpoint : '/users/:id'
+    methohd:`PUT`
+    body 
+    ```json
+    {
+    "firstname":"Abanob",
+    "lastname":"Magdy",
+    "username":"Abanob",
+    "password_digest" :"password_digest"
+    }
+   
+    ``` 
+
+- DELETE - [Token]
+    endpoint : '/users/:id'
+    methohd:`DELETE`
+    body 
+    ```json
+    {
+    "id":"12",
+    }
+
+    ``` 
+
+- AuthUser - [Token]
+    endpoint : '/users/auth''
+    methohd:`POST`
+    body 
+    ```json
+    {
+    "username":"Alba",
+    "password" :"password_digest"
+    }
+
+    ``` 
 
 #### Orders
-- Current Order by user (args: user id)[token required]
-- [OPTIONAL] Completed Orders by user (args: user id)[token required]
+
+
+- Index - [Token]
+    endpoint : '/orderes'
+    methohd:`GET`
+    body 
+    ```json
+    N\A
+     ```
+    
+
+- Show - [Token]
+    endpoint : '/orderes/:id'
+    methohd:`GET`
+    body 
+    ```json
+    N\A
+     ```
+  
+
+- Create New - [Token]
+    endpoint : '/orderes'
+    methohd:`POST`
+    body 
+    ```json
+    N\A
+    
+    ```
+  
+- Update - [Token]
+    endpoint : '/orderes/:id'
+    methohd:`PUT`
+    body 
+    ```json
+    {
+    "status": "complete",
+    "user_id": "4"
+    }
+   
+    ``` 
+
+- DELETE - [Token]
+    endpoint : '/orderes/:id'
+    methohd:`DELETE`
+    body 
+    ```json
+    {
+    "id":"12",
+    }
+
+    ``` 
+
+- Add Product to the logged User- [Token]
+    endpoint : '/orders/:id/products'
+    methohd:`POST`
+    body 
+    ```json
+     {
+    "quantity":6,
+    "productId":10
+        }
+    
+    ```
+  
+
+- Get user current order - [Token]
+    endpoint : '/orders/current/:user_id/user'
+    methohd:`GET`
+    body 
+    ```json
+    N\A
+     ```
+
+
+- Get user current order - [Token]
+    endpoint : '/orders/:id/complete/:user_id/user'
+    methohd:`PATCH`
+    body 
+    ```json
+    N\A
+     ```
 
 ## Data Shapes
 #### Product
 -  id
 - name
 - price
-- [OPTIONAL] category
+- category_id
 
 #### User
 - id
@@ -35,8 +300,12 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 #### Orders
 - id
-- id of each product in the order
-- quantity of each product in the order
 - user_id
-- status of order (active or complete)
+- status 
+
+#### Orders_Producsts
+- id
+- order_id
+- product_id
+- quantity 
 

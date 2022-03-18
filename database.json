@@ -9,8 +9,8 @@
     "test": {
         "driver": "pg",
         "host": "127.0.0.1",
-        "database": "store",
-        "user": "storeuser",
+        "database": "store_test",
+        "user": "store_test",
         "password": "123456"
     }
   }

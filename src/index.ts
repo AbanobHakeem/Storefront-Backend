@@ -1,18 +1,20 @@
 import express from 'express';
-import { UserStore,User } from './models/User';
+import CategoryRoutes from './handlers/category_handdler';
+import ProductRoutes from './handlers/product_handdler';
+import bodyParser from 'body-parser';
+import UserRoutes from './handlers/user_handdler';
+import OrderRoutes from './handlers/order_handdler';
+
 const app = express();
 const port = 3000;
-app.get('/api/create', (req, res) => {
-  const userstore=new UserStore;
-  const user :User={fullname:"abanob",email:"Abanoba@mirage.com"};
-  userstore.create(user)
-  
- });
- app.get('/api/list', (req, res) => {
-  const userstore=new UserStore;
-  console.log(userstore.index())
-  
- });
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+CategoryRoutes(app);  
+ProductRoutes(app);
+UserRoutes(app);
+OrderRoutes(app);
+
  app.get('**', (req, res) => {
   res.send(`this is notfounded 404 At ${req.originalUrl}`);
  });
