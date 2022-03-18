@@ -17,7 +17,7 @@ Your application must make use of the following libraries:
 ## Steps to use the app
 
 
-### 2. how to setup and connect to the database
+### 1. how to setup and connect to the database
 
 Creat a donenv file and add the folloung
 POSTGRES_HOST=YOurHost
